@@ -1,5 +1,8 @@
 # ITSProject
 
+## Main plan
+- Try to use Fast Planner
+
 For example:
 - http://acl.mit.edu/projects/real-time-planning-obstacle-avoidance-uavs 
 - https://github.com/HKUST-Aerial-Robotics/Fast-Planner 
