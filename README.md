@@ -1,9 +1,5 @@
 # ITSProject
 
 ## Main plan
-- Try to use Fast Planner
-
-For example:
-- http://acl.mit.edu/projects/real-time-planning-obstacle-avoidance-uavs 
-- https://github.com/HKUST-Aerial-Robotics/Fast-Planner 
-- https://github.com/DexterInd/GoPiGo3/tree/master/Projects/IntelligentObjectAvoider 
+- Use Parrot 2 camera feed to detect humans and their distance from camera real time.
+- Use some algorithm for drone pathfinding, which avoids collision with humans.
