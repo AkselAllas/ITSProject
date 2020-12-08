@@ -1,13 +1,49 @@
-import ardrone
+# import ardrone
 
-drone = ardrone.ARDrone()
+# drone = ardrone.ARDrone()
 
-drone.takeoff()
-drone.land()
+# drone.takeoff()
+# drone.land()
 
-print(drone.navdata)
-print(drone.navdata['demo']['battery'])
+# print(drone.navdata)
+# print(drone.navdata['demo']['battery'])
 
-drone.image.show()
+# drone.image.show()
 
-drone.halt()
+# drone.halt()
+
+
+# ----
+
+import time
+import cv2
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
+from pyardrone import ARDrone
+from pyardrone.video import VideoClient
+from contextlib import suppress
+
+drone = ARDrone()
+drone.navdata_ready.wait()  # wait until NavData is ready
+with suppress(KeyboardInterrupt):
+    while True:
+        print(drone.state)
+
+drone.video_ready.wait()
+try:
+    while True:
+        cv2.imshow('im', drone.frame)
+        if cv2.waitKey(10) == ord(' '):
+            break
+finally:
+    drone.close()
+
+#while not drone.state.fly_mask:
+    #drone.takeoff()
+
+#time.sleep(20)              # hover for a while
+
+#while drone.state.fly_mask:
+    #drone.land()
