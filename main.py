@@ -81,7 +81,6 @@ config = 'tiny_yolo/yolov3.cfg'
 weights = 'tiny_yolo/yolov3.weights'
 net, background = tiny_yolo.yolo_update.init_yolo(config, weights)
 
-i = 0
 fps = 0
 cv2.namedWindow('Detection and tracking')
 last_frame_shown = time.time()
@@ -108,16 +107,18 @@ try:
                 ##Control drone
 
                 if w > 220:
-                    drone.move(backward=0.5)
+                    drone.move(backward=0.3)
                 else:
-                    if not drone.state.fly_mask:
-                        while not drone.state.fly_mask:
-                            drone.takeoff()
+                    # if not flying yet, takeoff
+                    while not drone.state.fly_mask:
+                        drone.takeoff()
+
                     t_end = time_s + 3
                     if time.time() < t_end:
                         drone.move(forward=0.3)
                     if time.time() < t_end + 5:
-                        drone.land()
+                        while drone.state.fly_mask:
+                            drone.land()
 
             image = add_fps(image, fps)
             cv2.imshow('Detection and tracking', image)
@@ -128,4 +129,5 @@ try:
         # playVideo(drone)
         sys.exit()
 finally:
+    drone.land()
     drone.close()
