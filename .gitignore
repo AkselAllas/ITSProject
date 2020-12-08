@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+ARDrone_SDK_2_0_1
+__MACOSX
