@@ -130,3 +130,7 @@ dmypy.json
 
 ARDrone_SDK_2_0_1
 __MACOSX
+
+yolov*.cfg
+yolov*.weights
+*.mp4
