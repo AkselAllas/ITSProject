@@ -66,7 +66,7 @@ def fps_calc(current_time, last_frame_shown):
 
 
 def add_fps(image, fps):
-    cv2.putText(image, "FPS: " + str(fps), (100, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+    cv2.putText(image, "FPS: " + str(fps), (200, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
     return image
 
 
@@ -77,8 +77,8 @@ drone.navdata_ready.wait()
 drone.video_ready.wait()
 
 # yolo preparation
-config = 'tiny_yolo/yolov3.cfg'
-weights = 'tiny_yolo/yolov3.weights'
+config = 'tiny_yolo/yolov3-tiny.cfg'
+weights = 'tiny_yolo/yolov3-tiny.weights'
 net, background = tiny_yolo.yolo_update.init_yolo(config, weights)
 
 fps = 0
@@ -102,23 +102,23 @@ try:
                 x, y, w, h = bbox
 
                 image = tiny_yolo.yolo_update.add_bounding_box(image, bbox)
-                image = tiny_yolo.yolo_update.add_bounding_box(image, w)
+                image = tiny_yolo.yolo_update.add_size(image, w)
 
                 ##Control drone
 
-                if w > 220:
-                    drone.move(backward=0.3)
-                else:
-                    # if not flying yet, takeoff
-                    while not drone.state.fly_mask:
-                        drone.takeoff()
+                # if w > 220:
+                #     drone.move(backward=0.3)
+                # else:
+                #     if not flying yet, takeoff
+                #     while not drone.state.fly_mask:
+                #         drone.takeoff()
 
-                    t_end = time_s + 3
-                    if time.time() < t_end:
-                        drone.move(forward=0.3)
-                    if time.time() < t_end + 5:
-                        while drone.state.fly_mask:
-                            drone.land()
+                #     t_end = time_s + 3
+                #     if time.time() < t_end:
+                #         drone.move(forward=0.3)
+                #     if time.time() < t_end + 5:
+                #         while drone.state.fly_mask:
+                #             drone.land()
 
             image = add_fps(image, fps)
             cv2.imshow('Detection and tracking', image)
