@@ -89,7 +89,7 @@ time_s = time.time()
 try:
     # threading.Thread(target=recordVideo, args=(drone,)).start()
     # navThread = threading.Thread(target=printNavdata, args=(drone,)).start()
-    # out = cv2.VideoWriter('record-cup.mp4', 0x7634706d, 30.0, (640,360))
+    out = cv2.VideoWriter('record-cup.mp4', 0x7634706d, 30.0, (640,360))
     with suppress(KeyboardInterrupt):
         while True:
             # image = cv2.resize(image,(608,608), interpolation = cv2.INTER_AREA)
@@ -122,6 +122,7 @@ try:
 
             image = add_fps(image, fps)
             cv2.imshow('Detection and tracking', image)
+            out.write(image)
 
             if cv2.waitKey(10) == ord(' '):
                 break
