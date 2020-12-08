@@ -106,19 +106,19 @@ try:
 
                 ##Control drone
 
-                # if w > 220:
-                #     drone.move(backward=0.3)
-                # else:
-                #     if not flying yet, takeoff
-                #     while not drone.state.fly_mask:
-                #         drone.takeoff()
+                if w > 220:
+                    drone.move(backward=0.3)
+                else:
+                    # if not flying yet, takeoff
+                    while not drone.state.fly_mask:
+                        drone.takeoff()
 
-                #     t_end = time_s + 3
-                #     if time.time() < t_end:
-                #         drone.move(forward=0.3)
-                #     if time.time() < t_end + 5:
-                #         while drone.state.fly_mask:
-                #             drone.land()
+                    t_end = time_s + 3
+                    if time.time() < t_end:
+                        drone.move(forward=0.3)
+                    if time.time() < t_end + 5:
+                        while drone.state.fly_mask:
+                            drone.land()
 
             image = add_fps(image, fps)
             cv2.imshow('Detection and tracking', image)
