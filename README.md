@@ -8,6 +8,7 @@
 
 - Python 3.4 or newer: 3.7 and 3.8 work fine
 - OpenCV 3.4 - install with `pip3 install -Iv opencv-contrib-python=3.4.11.45`
+- Pyardrone library: `pip3 install pyardrone`
 
 ## python-ardrone library - not in use
 
