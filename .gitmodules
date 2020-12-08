@@ -1,0 +1,3 @@
+[submodule "python-ardrone"]
+	path = python-ardrone
+	url = git@github.com:lilyinstarlight/python-ardrone.git
