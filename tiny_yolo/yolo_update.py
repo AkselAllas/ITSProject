@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import video_class
 
-CONF_THRESH, NMS_THRESH = 0, 0.9
+CONF_THRESH, NMS_THRESH = 0.9, 0.99
 colors = [[0, 0, 255]]
 first_threshold = 100
 second_threshold = 200
@@ -32,10 +32,10 @@ def get_bounding_box(frame, net, output_layers):
     for output in layer_outputs:
         for detection in output:
             scores = detection[4:]
-            class_id = 0  # class 0 is person
+            class_id = 0 # class 0 is person
             confidence = scores[class_id]
-            if confidence > CONF_THRESH:
-                print("confidence", confidence)
+            #if confidence > CONF_THRESH:
+                #print("confidence", confidence)
             if confidence > CONF_THRESH:
                 center_x, center_y, w, h = (detection[0:4] * np.array([width, height, width, height])).astype('int')
 
@@ -54,13 +54,14 @@ def get_bounding_box(frame, net, output_layers):
     if len(indices) == 0:
         return None
     x, y, w, h = b_boxes[indices[0]]
+    print(w)
     return x, y, w, h
 
 
 if __name__ == '__main__':
     # can be downloaded from https://pjreddie.com/darknet/yolo/
-    config = 'yolov3-tiny.cfg'
-    weights = 'yolov3-tiny.weights'
+    config = 'yolov3.cfg'
+    weights = 'yolov3.weights'
     net, background = init_yolo(config, weights)
     video = video_class.VideoHandler(src='vid.mp4')
 
@@ -74,6 +75,7 @@ if __name__ == '__main__':
             break
 
         ret, image, fps = video.last_frame()
+        #image = cv2.resize(image,(608,608), interpolation = cv2.INTER_AREA)
         cv2.setWindowTitle('Detection and tracking', f'FPS: {fps}')
         if not ret:
             print("No frame")

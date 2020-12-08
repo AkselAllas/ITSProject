@@ -17,3 +17,5 @@ apt install python3 python3-pip libavcodec-dev libavformat-dev libswscale-dev
 python3 install pillow
 ./setup.py install
 ```
+
+*) Everytime you want restart drone battery, you have to reconnect to the ARDRONE wifi with your laptop.
