@@ -91,11 +91,20 @@ try:
     # navThread = threading.Thread(target=printNavdata, args=(drone,)).start()
     out = cv2.VideoWriter('record-cup.mp4', 0x7634706d, 30.0, (640,360))
     with suppress(KeyboardInterrupt):
+        land_time = time.time() + 15
         while True:
             # image = cv2.resize(image,(608,608), interpolation = cv2.INTER_AREA)
 
             image = drone.frame
             fps, last_frame_shown = fps_calc(time.time(), last_frame_shown)
+
+            while not drone.state.fly_mask:
+                drone.takeoff()
+
+            if time.time() > land_time:
+                while drone.state.fly_mask:
+                    drone.land()
+                break
 
             bbox = tiny_yolo.yolo_update.get_bounding_box(image, net, background)
             if bbox:
@@ -104,21 +113,13 @@ try:
                 image = tiny_yolo.yolo_update.add_bounding_box(image, bbox)
                 image = tiny_yolo.yolo_update.add_size(image, w)
 
-                ##Control drone
-
+                ## Control drone
                 if w > 220:
                     drone.move(backward=0.3)
                 else:
-                    # if not flying yet, takeoff
-                    while not drone.state.fly_mask:
-                        drone.takeoff()
-
                     t_end = time_s + 3
                     if time.time() < t_end:
                         drone.move(forward=0.3)
-                    if time.time() < t_end + 5:
-                        while drone.state.fly_mask:
-                            drone.land()
 
             image = add_fps(image, fps)
             cv2.imshow('Detection and tracking', image)
@@ -126,9 +127,10 @@ try:
 
             if cv2.waitKey(10) == ord(' '):
                 break
-        # out.release()
+        out.release()
         # playVideo(drone)
         sys.exit()
 finally:
-    drone.land()
+    while drone.state.fly_mask:
+        drone.land()
     drone.close()
