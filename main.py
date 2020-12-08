@@ -59,10 +59,9 @@ drone.navdata_ready.wait()
 drone.video_ready.wait()
 
 #yolo preparation
-config = 'yolov3.cfg'
-weights = 'yolov3.weights'
+config = 'tiny_yolo/yolov3.cfg'
+weights = 'tiny_yolo/yolov3.weights'
 net, background = tiny_yolo.yolo_update.init_yolo(config, weights)
-video = tiny_yolo.video_class.VideoHandler(src='vid.mp4')
 
 i = 0
 fps = 0
@@ -73,7 +72,6 @@ time_s = time.time()
 try:
     # threading.Thread(target=recordVideo, args=(drone,)).start()
     # navThread = threading.Thread(target=printNavdata, args=(drone,)).start()
-    threading.Thread(target=hoverDrone, args=(drone,)).start()
     # out = cv2.VideoWriter('record-cup.mp4', 0x7634706d, 30.0, (640,360))
     with suppress(KeyboardInterrupt):
         while True:
@@ -81,27 +79,29 @@ try:
 
 
             image = drone.frame
-            cv2.setWindowTitle('Detection and tracking')
 
-            bbox = tiny_yolo.get_bounding_box(image, net, background)
-            x, y, w, h = bbox
+            bbox = tiny_yolo.yolo_update.get_bounding_box(image, net, background)
+            if(bbox):
+                x, y, w, h = bbox
 
             if bbox is not None:
                 p1 = (int(bbox[0]), int(bbox[1]))
                 p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
                 cv2.rectangle(image, p1, p2, (255, 0, 0), 2, 1)
 
-            #Control drone
-            if (w>180):
-                drone.move(backward=0.5)
-            else:
-                if not drone.state.fly_mask:
-                    drone.takeoff()
-                t_end = time_s + 3
-                if time.time() < t_end:
-                    drone.move(forward=0.15)
-                if time.time() < t_end+3:
-                    drone.land()
+            ##Control drone
+            if(bbox):
+                if (w>220):
+                    drone.move(backward=0.5)
+                else:
+                    if not drone.state.fly_mask:
+                        while not drone.state.fly_mask:
+                            drone.takeoff()
+                    t_end = time_s + 3
+                    if time.time() < t_end:
+                        drone.move(forward=0.3)
+                    if time.time() < t_end+5:
+                        drone.land()
 
             cv2.imshow('Detection and tracking', image)
 

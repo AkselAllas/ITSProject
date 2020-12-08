@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import video_class
 
 CONF_THRESH, NMS_THRESH = 0.9, 0.99
 colors = [[0, 0, 255]]
@@ -58,34 +57,34 @@ def get_bounding_box(frame, net, output_layers):
     return x, y, w, h
 
 
-if __name__ == '__main__':
-    # can be downloaded from https://pjreddie.com/darknet/yolo/
-    config = 'yolov3.cfg'
-    weights = 'yolov3.weights'
-    net, background = init_yolo(config, weights)
-    video = video_class.VideoHandler(src='vid.mp4')
-
-    i = 0
-    fps = 0
-    cv2.namedWindow('Detection and tracking')
-
-    while video.is_open():
-        i += 1
-        if i >= 1000: # for not playing entire video
-            break
-
-        ret, image, fps = video.last_frame()
-        #image = cv2.resize(image,(608,608), interpolation = cv2.INTER_AREA)
-        cv2.setWindowTitle('Detection and tracking', f'FPS: {fps}')
-        if not ret:
-            print("No frame")
-            continue
-
-        bbox = get_bounding_box(image, net, background)
-
-        if bbox is not None:
-            p1 = (int(bbox[0]), int(bbox[1]))
-            p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
-            cv2.rectangle(image, p1, p2, (255, 0, 0), 2, 1)
-        cv2.imshow('Detection and tracking', image)
-        key = cv2.waitKey(1)
+#if __name__ == '__main__':
+#    # can be downloaded from https://pjreddie.com/darknet/yolo/
+#    config = 'tiny_yolo/yolov3.cfg'
+#    weights = 'tiny_yolo/yolov3.weights'
+#    net, background = init_yolo(config, weights)
+#
+#    i = 0
+#    fps = 0
+#    cv2.namedWindow('Detection and tracking')
+#
+#    while video.is_open():
+#        i += 1
+#        if i >= 1000: # for not playing entire video
+#            break
+#
+#        ret, image, fps = video.last_frame()
+#        #image = cv2.resize(image,(608,608), interpolation = cv2.INTER_AREA)
+#        cv2.setWindowTitle('Detection and tracking', f'FPS: {fps}')
+#        if not ret:
+#            print("No frame")
+#            continue
+#
+#        bbox = get_bounding_box(image, net, background)
+#
+#        if bbox is not None:
+#            p1 = (int(bbox[0]), int(bbox[1]))
+#            p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
+#            cv2.rectangle(image, p1, p2, (255, 0, 0), 2, 1)
+#        cv2.imshow('Detection and tracking', image)
+#        key = cv2.waitKey(1)
+#
