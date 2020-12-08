@@ -15,31 +15,38 @@ from pyardrone import at
 from pyardrone.video import VideoClient
 from contextlib import suppress
 
+
 def playVideo(drone):
     while True:
         cv2.imshow('im', drone.frame)
         if cv2.waitKey(10) == ord(' '):
             break
 
-def recordVideo(drone):  
+
+def recordVideo(drone):
     while True:
         out.write(drone.frame)
+
 
 def printMetadata(drone):
     while True:
         print(drone.navdata.metadata)
 
+
 def printNavdata(drone):
     while True:
         print(drone.navdata)
+
 
 def printState(drone):
     while True:
         print(drone.state)
 
+
 def printFrameSize(drone):
     while True:
         print(drone.frame.size())
+
 
 def hoverDrone(drone):
     while not drone.state.fly_mask:
@@ -52,13 +59,24 @@ def hoverDrone(drone):
     while drone.state.fly_mask:
         drone.land()
 
+
+def fps_calc(current_time, last_frame_shown):
+    fps = round(1 / (current_time - last_frame_shown), 1)
+    return fps, current_time
+
+
+def add_fps(image, fps):
+    cv2.putText(image, "FPS: " + str(fps), (100, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+    return image
+
+
 drone = ARDrone()
 # drone.send(at.CONFIG("video:video_codec", "131")) # Livestream 720p w/ hw encoder, no record
 # time.sleep(2) # Let the Drone accept the config first
 drone.navdata_ready.wait()
 drone.video_ready.wait()
 
-#yolo preparation
+# yolo preparation
 config = 'tiny_yolo/yolov3.cfg'
 weights = 'tiny_yolo/yolov3.weights'
 net, background = tiny_yolo.yolo_update.init_yolo(config, weights)
@@ -66,7 +84,7 @@ net, background = tiny_yolo.yolo_update.init_yolo(config, weights)
 i = 0
 fps = 0
 cv2.namedWindow('Detection and tracking')
-
+last_frame_shown = time.time()
 time_s = time.time()
 
 try:
@@ -77,21 +95,19 @@ try:
         while True:
             # image = cv2.resize(image,(608,608), interpolation = cv2.INTER_AREA)
 
-
             image = drone.frame
+            fps, last_frame_shown = fps_calc(time.time(), last_frame_shown)
 
             bbox = tiny_yolo.yolo_update.get_bounding_box(image, net, background)
-            if(bbox):
+            if bbox:
                 x, y, w, h = bbox
 
-            if bbox is not None:
-                p1 = (int(bbox[0]), int(bbox[1]))
-                p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
-                cv2.rectangle(image, p1, p2, (255, 0, 0), 2, 1)
+                image = tiny_yolo.yolo_update.add_bounding_box(image, bbox)
+                image = tiny_yolo.yolo_update.add_bounding_box(image, w)
 
-            ##Control drone
-            if(bbox):
-                if (w>220):
+                ##Control drone
+
+                if w > 220:
                     drone.move(backward=0.5)
                 else:
                     if not drone.state.fly_mask:
@@ -100,9 +116,10 @@ try:
                     t_end = time_s + 3
                     if time.time() < t_end:
                         drone.move(forward=0.3)
-                    if time.time() < t_end+5:
+                    if time.time() < t_end + 5:
                         drone.land()
 
+            image = add_fps(image, fps)
             cv2.imshow('Detection and tracking', image)
 
             if cv2.waitKey(10) == ord(' '):

@@ -31,10 +31,10 @@ def get_bounding_box(frame, net, output_layers):
     for output in layer_outputs:
         for detection in output:
             scores = detection[4:]
-            class_id = 0 # class 0 is person
+            class_id = 0  # class 0 is person
             confidence = scores[class_id]
-            #if confidence > CONF_THRESH:
-                #print("confidence", confidence)
+            # if confidence > CONF_THRESH:
+            # print("confidence", confidence)
             if confidence > CONF_THRESH:
                 center_x, center_y, w, h = (detection[0:4] * np.array([width, height, width, height])).astype('int')
 
@@ -57,7 +57,21 @@ def get_bounding_box(frame, net, output_layers):
     return x, y, w, h
 
 
-#if __name__ == '__main__':
+def add_bounding_box(image, bbox):
+    p1 = (int(bbox[0]), int(bbox[1]))
+    p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
+    cv2.rectangle(image, p1, p2, (255, 0, 0), 2, 1)
+    return image
+
+
+def add_size(image, size):
+    cv2.putText(image, "SIZE: " + str(round(size, 2)), (100, 50),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.5, (255, 0, 0),
+                2)
+    return image
+
+# if __name__ == '__main__':
 #    # can be downloaded from https://pjreddie.com/darknet/yolo/
 #    config = 'tiny_yolo/yolov3.cfg'
 #    weights = 'tiny_yolo/yolov3.weights'
