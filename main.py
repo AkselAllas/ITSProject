@@ -89,7 +89,7 @@ time_s = time.time()
 try:
     # threading.Thread(target=recordVideo, args=(drone,)).start()
     # navThread = threading.Thread(target=printNavdata, args=(drone,)).start()
-    out = cv2.VideoWriter('record-cup.mp4', 0x7634706d, 30.0, (640,360))
+    out = cv2.VideoWriter('test-flight-with-yolo.mp4', 0x7634706d, 30.0, (640,360))
     with suppress(KeyboardInterrupt):
         land_time = time.time() + 15
         while True:
