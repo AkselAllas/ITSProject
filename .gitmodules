@@ -1,0 +1,3 @@
+[submodule "pyardrone"]
+	path = pyardrone
+	url = https://github.com/juusujanar/pyardrone.git
